@@ -47,7 +47,7 @@ export default [
     src: `${publicPath}feedback_m.png`,
     title: "gallery.feedback.title",
     detail: "gallery.feedback.detail",
-    imgs: ["${publicPath}feedback_pc.png", "${publicPath}feedback_m.png"]
+    imgs: [`${publicPath}feedback_pc.png`, `${publicPath}feedback_m.png`]
   },
   {
     src: `${publicPath}changejob_m.png`,

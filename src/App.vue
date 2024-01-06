@@ -53,15 +53,6 @@ function openLightbox({ imgs, title, detail }) {
       <RouterLink to="/ch">CH</RouterLink>
     </div>
     <div class="app__main m-auto">
-      <!-- <div class="main__about-me">
-        <div class="main__about-me__title">
-          {{ t("aboutMe.title") }}
-        </div>
-        <div
-          v-html="t('aboutMe.description')"
-          class="main__about-me__description"
-        />
-      </div> -->
       <div ref="galleryContainerRef" class="main__portfolio">
         <Gallery
           :imgs="imgs"
@@ -113,30 +104,22 @@ body {
 
 .app {
   min-height: 100vh;
-  // top: 0;
-  // bottom: 0;
-  // left: 0;
-  // right: 0;
   padding: 20px;
 
   &__main {
-    // width: 320px;
     color: #e5e5e5;
     padding: 20px;
 
     @media screen and (min-width: 540px) {
       padding: 40px;
-      // width: 500px;
     }
 
     @media screen and (min-width: 960px) {
       padding: 60px;
-      // width: 900px;
     }
 
     @media screen and (min-width: 1300px) {
       padding: 80px;
-      // width: 1200px;
     }
 
     &__about-me {

@@ -2,11 +2,6 @@ import { createI18n } from "vue-i18n";
 
 const messages = {
   en: {
-    title: "hi there",
-    aboutMe: {
-      title: "A little bit about me...",
-      description: "A teacher-turned frontend developer. \n based in Taiwan"
-    },
     gallery: {
       vue: {
         title: "Vue, Bundler, and Node Migration",
@@ -56,11 +51,6 @@ const messages = {
     }
   },
   zhTW: {
-    title: "嗨嗨",
-    aboutMe: {
-      title: "關於我的一小部分...",
-      description: "由老師轉變為前端工程師 \n 來自台灣"
-    },
     gallery: {
       vue: {
         title: "Vue、打包工具、Node 環境升版",
