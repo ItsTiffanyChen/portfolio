@@ -6,7 +6,7 @@ import { PARAMS_MAPPING } from "./i18n";
 import keys from "lodash/keys";
 import Gallery from "./components/Gallery.vue";
 import Lightbox from "./components/Lightbox.vue";
-import galleryList from "./galleryList.json";
+import galleryList from "./galleryList.js";
 
 const router = useRouter();
 const route = useRoute();
