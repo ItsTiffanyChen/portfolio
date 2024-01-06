@@ -22,21 +22,18 @@ const lightbox = reactive({
 
 onMounted(async () => {
   await router.isReady();
+  validateLang(route.params.lang);
 });
 
-watch(
-  () => route.params.lang,
-  val => {
-    if (keys(PARAMS_MAPPING).indexOf(val) !== -1) {
-      locale.value = PARAMS_MAPPING[val];
-    } else {
-      router.push("/en");
-    }
-  },
-  {
-    immediate: true
+watch(() => route.params.lang, validateLang);
+
+function validateLang(val) {
+  if (keys(PARAMS_MAPPING).indexOf(val) !== -1) {
+    locale.value = PARAMS_MAPPING[val];
+  } else {
+    router.push("/en");
   }
-);
+}
 
 function openLightbox({ imgs, title, detail }) {
   lightbox.imgs = imgs;

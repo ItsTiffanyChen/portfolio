@@ -12,7 +12,7 @@ const router = createRouter({
       : createWebHashHistory("/portfolio"),
   routes: [
     {
-      path: "/:lang?",
+      path: "/:lang",
       component: App
     },
     { path: "/:pathMatch(.*)*", redirect: "/en" }
