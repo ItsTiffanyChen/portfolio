@@ -17,7 +17,8 @@ const lightbox = reactive({
   show: false,
   imgs: [],
   title: "",
-  detail: ""
+  detail: "",
+  url: ""
 });
 
 onMounted(async () => {
@@ -35,11 +36,16 @@ function validateLang(val) {
   }
 }
 
-function openLightbox({ imgs, title, detail }) {
+function openLightbox({ imgs, title, detail, url }) {
   lightbox.imgs = imgs;
   lightbox.title = title;
   lightbox.detail = detail;
+  lightbox.url = url;
   lightbox.show = true;
+}
+
+function isMobileImg(img) {
+  return img.indexOf("_m.png") !== -1;
 }
 </script>
 
@@ -78,9 +84,18 @@ function openLightbox({ imgs, title, detail }) {
           class="app__lightbox__detail text-left mb-4"
           v-html="t(lightbox.detail)"
         />
+        <div v-if="lightbox.url" class="text-left mb-2">
+          <a
+            class="app__lightbox__link d-inline-block position-relative"
+            :href="lightbox.url"
+            target="_blank"
+            >{{ t("linkToPage") }}</a
+          >
+        </div>
         <img
-          class="app__lightbox__img mb-2"
+          class="app__lightbox__img mb-2 w-100"
           v-for="(img, index) in lightbox.imgs"
+          :class="{ 'app__lightbox__img--m': isMobileImg(img) }"
           :key="index"
           :src="img"
           :alt="t(lightbox.title)"
@@ -141,8 +156,16 @@ body {
   }
 
   &__lightbox {
+    font-size: 14px;
+
+    @media screen and (min-width: 960px) {
+      font-size: 16px;
+    }
+
     &__img {
-      max-width: 100%;
+      &--m {
+        max-width: 360px;
+      }
     }
 
     &__title {
@@ -156,10 +179,30 @@ body {
 
     &__detail {
       white-space: pre-wrap;
-      font-size: 14px;
+    }
 
-      @media screen and (min-width: 960px) {
-        font-size: 16px;
+    &__link {
+      text-decoration: none;
+      transition: color 0.15s linear;
+
+      &::after {
+        content: "";
+        position: absolute;
+        height: 1px;
+        width: 0;
+
+        bottom: 0;
+        left: 0;
+        background-color: #0270e5;
+        transition: width 0.15s ease;
+      }
+
+      &:hover {
+        color: #0270e5;
+
+        &::after {
+          width: 100%;
+        }
       }
     }
   }

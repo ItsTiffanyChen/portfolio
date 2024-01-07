@@ -2,6 +2,7 @@ import { createI18n } from "vue-i18n";
 
 const messages = {
   en: {
+    linkToPage: "Link to Page",
     gallery: {
       vue: {
         title: "Vue, Bundler, and Node Migration",
@@ -51,6 +52,7 @@ const messages = {
     }
   },
   zhTW: {
+    linkToPage: "前往頁面",
     gallery: {
       vue: {
         title: "Vue、打包工具、Node 環境升版",
