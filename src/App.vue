@@ -45,9 +45,19 @@ function openLightbox({ imgs, title, detail }) {
 
 <template>
   <div class="app position-relative">
-    <div class="text-right">
-      <RouterLink class="mr-2" to="/en">EN</RouterLink>
-      <RouterLink to="/ch">CH</RouterLink>
+    <div class="p-2 text-right">
+      <RouterLink
+        class="app__lang mr-2"
+        :class="{ 'app__lang--active': route.params.lang === 'en' }"
+        to="/en"
+        >EN</RouterLink
+      >
+      <RouterLink
+        class="app__lang"
+        :class="{ 'app__lang--active': route.params.lang === 'ch' }"
+        to="/ch"
+        >CH</RouterLink
+      >
     </div>
     <div class="app__main m-auto">
       <div ref="galleryContainerRef" class="main__portfolio">
@@ -94,14 +104,24 @@ body {
 }
 </style>
 <style scoped lang="scss">
-@mixin title {
-  font-size: 20px;
-  font-weight: 500;
-}
-
 .app {
   min-height: 100vh;
-  padding: 20px;
+  min-width: 360px;
+
+  &__lang {
+    color: #a1d8ed;
+    transition: color 0.15s linear;
+    text-decoration: none;
+
+    &:hover {
+      color: #86b7c9;
+    }
+
+    &--active,
+    &--active:hover {
+      color: #5f828e;
+    }
+  }
 
   &__main {
     color: #e5e5e5;
@@ -118,16 +138,6 @@ body {
     @media screen and (min-width: 1300px) {
       padding: 80px;
     }
-
-    &__about-me {
-      &__title {
-        @include title;
-      }
-
-      &__description {
-        white-space: pre-wrap;
-      }
-    }
   }
 
   &__lightbox {
@@ -136,21 +146,21 @@ body {
     }
 
     &__title {
-      @include title;
+      font-size: 16px;
+      font-weight: 500;
+
+      @media screen and (min-width: 960px) {
+        font-size: 18px;
+      }
     }
 
     &__detail {
       white-space: pre-wrap;
-    }
-  }
+      font-size: 14px;
 
-  a {
-    color: #a1d8ed;
-    transition: color 0.15s linear;
-    text-decoration: none;
-
-    &:hover {
-      color: #86b7c9;
+      @media screen and (min-width: 960px) {
+        font-size: 16px;
+      }
     }
   }
 }

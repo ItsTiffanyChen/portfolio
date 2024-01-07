@@ -198,23 +198,27 @@ export default {
       bottom: 0;
       left: 0;
       right: 0;
-      background-color: rgba(#6a6a6a, 0.4);
+      background-color: rgba(#6a6a6a, 0.8);
       cursor: pointer;
       transition: background-color 0.15s linear;
 
       &__text {
-        font-size: 20px;
+        font-size: 16px;
         font-weight: 500;
-        opacity: 0;
+        opacity: 0.8;
         transition: opacity 0.15s linear;
+
+        @media screen and (min-width: 960px) {
+          font-size: 20px;
+        }
       }
 
       &:hover {
-        background-color: rgba(#6a6a6a, 0.6);
+        background-color: rgba(#6a6a6a, 0.3);
 
         .gallery__img__mask__text {
           display: block;
-          opacity: 0.8;
+          opacity: 0;
         }
       }
     }

@@ -38,18 +38,6 @@ export default [
     ]
   },
   {
-    src: `${publicPath}feedback_pc.png`,
-    title: "gallery.feedback.title",
-    detail: "gallery.feedback.detail",
-    imgs: [`${publicPath}feedback_pc.png`, `${publicPath}feedback_m.png`]
-  },
-  {
-    src: `${publicPath}feedback_m.png`,
-    title: "gallery.feedback.title",
-    detail: "gallery.feedback.detail",
-    imgs: [`${publicPath}feedback_pc.png`, `${publicPath}feedback_m.png`]
-  },
-  {
     src: `${publicPath}changejob_m.png`,
     title: "gallery.changeJob.title",
     detail: "gallery.changeJob.detail",
@@ -74,18 +62,6 @@ export default [
     imgs: [`${publicPath}csr_pc.png`, `${publicPath}csr_m.png`]
   },
   {
-    src: `${publicPath}newestjob_pc.png`,
-    title: "gallery.newestJob.title",
-    detail: "gallery.newestJob.detail",
-    imgs: [`${publicPath}newestjob_pc.png`, `${publicPath}newestjob_m.png`]
-  },
-  {
-    src: `${publicPath}newestjob_m.png`,
-    title: "gallery.newestJob.title",
-    detail: "gallery.newestJob.detail",
-    imgs: [`${publicPath}newestjob_pc.png`, `${publicPath}newestjob_m.png`]
-  },
-  {
     src: `${publicPath}profile-portfolio_m.png`,
     title: "gallery.profilePortfolio.title",
     detail: "gallery.profilePortfolio.detail",
@@ -105,8 +81,8 @@ export default [
   },
   {
     src: `${publicPath}profile-company_pc.png`,
-    title: "gallery.feedback.title",
-    detail: "gallery.feedback.detail",
+    title: "gallery.profileCompany.title",
+    detail: "gallery.profileCompany.detail",
     imgs: [
       `${publicPath}profile-portfolio_pc.png`,
       `${publicPath}profile-company_m.png`
@@ -120,5 +96,29 @@ export default [
       `${publicPath}profile-portfolio_pc.png`,
       `${publicPath}profile-company_m.png`
     ]
+  },
+  {
+    src: `${publicPath}newestjob_pc.png`,
+    title: "gallery.newestJob.title",
+    detail: "gallery.newestJob.detail",
+    imgs: [`${publicPath}newestjob_pc.png`, `${publicPath}newestjob_m.png`]
+  },
+  {
+    src: `${publicPath}newestjob_m.png`,
+    title: "gallery.newestJob.title",
+    detail: "gallery.newestJob.detail",
+    imgs: [`${publicPath}newestjob_pc.png`, `${publicPath}newestjob_m.png`]
+  },
+  {
+    src: `${publicPath}feedback_pc.png`,
+    title: "gallery.feedback.title",
+    detail: "gallery.feedback.detail",
+    imgs: [`${publicPath}feedback_pc.png`, `${publicPath}feedback_m.png`]
+  },
+  {
+    src: `${publicPath}feedback_m.png`,
+    title: "gallery.feedback.title",
+    detail: "gallery.feedback.detail",
+    imgs: [`${publicPath}feedback_pc.png`, `${publicPath}feedback_m.png`]
   }
 ];
