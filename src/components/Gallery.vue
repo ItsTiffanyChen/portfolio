@@ -1,8 +1,8 @@
 <template>
-  <div>
+  <div ref="el">
     <div class="gallery d-flex flex-wrap">
       <div
-        v-for="(img, index) in imgsClone"
+        v-for="(img, index) in state.imgsClone"
         :key="img.id"
         class="gallery__img mb-2 position-relative mx-1"
         :style="getImgStyles(img.id)"
@@ -22,167 +22,169 @@
 </template>
 <script setup>
 import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
-</script>
-<script>
 import VueTypes from "vue-types";
 import ResizeObserver from "resize-observer-polyfill";
 import { v4 as uuidv4 } from "uuid";
+import { reactive, watch, onMounted, onUnmounted, ref, nextTick } from "vue"
 
-export default {
-  props: {
-    imgs: VueTypes.arrayOf(
+const props = defineProps({
+  imgs: VueTypes.arrayOf(
       VueTypes.shape({
         src: VueTypes.string.def("")
       }).def({ src: "" })
     ).def([]).loose,
     heightSetting: VueTypes.number.def(0),
     containerElement: VueTypes.instanceOf(HTMLDivElement)
-  },
-  emits: ["onImgClick"],
-  data() {
-    return {
-      imgsClone: [],
-      resizeObserver: null,
-      timeout: null
-    };
-  },
-  computed: {},
-  watch: {
-    heightSetting() {
-      this.debouncedCalcImgSize();
-    },
-    imgs() {
-      this.updateImgs();
-    }
-  },
-  mounted() {
-    this.resizeObserver = new ResizeObserver(entries => {
-      // console.log("resized");
-      this.debouncedCalcImgSize();
-    });
-    this.resizeObserver.observe(this.$el);
-    this.initImgs();
-  },
-  unmounted() {
-    this.resizeObserver.unobserve(this.$el);
-  },
-  methods: {
-    getValueWithoutUnit(val) {
-      return +val.replace("px", "");
-    },
-    getImgStyles(id) {
-      const img = this.imgsClone.find(img => img.id === id);
-      return `width: ${img.displayWidth ? `${img.displayWidth}px` : ""};`;
-    },
-    debouncedCalcImgSize() {
-      if (this.timeout) {
-        clearTimeout(this.timeout);
-        this.timeout = null;
-        this.timeout = setTimeout(() => {
-          this.calcImgSize();
-        }, 300);
-      } else {
-        this.timeout = setTimeout(() => {
-          this.calcImgSize();
-        }, 300);
-      }
-    },
-    calcImgSize() {
-      const containerEl = this.containerElement || this.$parent.$el;
-      const { paddingLeft, paddingRight, borderWidth } =
-        window.getComputedStyle(containerEl);
-      const containerWidth =
-        containerEl.clientWidth -
-        this.getValueWithoutUnit(paddingLeft) -
-        this.getValueWithoutUnit(paddingRight) -
-        this.getValueWithoutUnit(borderWidth) * 2;
-      if (!containerWidth) return;
-      const totalImgs = this.imgsClone.length;
-      let ratioSumMax = containerWidth / this.heightSetting;
-      let ratioSum,
-        ratio,
-        row,
-        i = 0;
-      let newImgList = [];
+})
+const emit = defineEmits(["onImgClick"])
+const { t } = useI18n();
 
-      for (i; i < totalImgs; ) {
-        // console.log("out");
-        ratioSum = 0;
-        row = new Array();
+const state = reactive({
+  imgsClone: [],
+  resizeObserver: null,
+  timeout: null
+})
 
-        while (i < totalImgs && ratioSum < ratioSumMax) {
-          // console.log("in");
-          const photo = { ...this.imgsClone[i] };
-          const { width, height } = photo;
-          ratio = width / height;
-          photo.isFirst = ratioSum === 0;
-          ratioSum += ratio;
+const el = ref(null)
 
-          row.push(photo);
-          i++;
+onMounted(async() => {
+  await nextTick()
+  state.resizeObserver = new ResizeObserver(entries => {
+    // console.log("resized");
+    debouncedCalcImgSize();
+  });
+  console.log(el.value);
+  state.resizeObserver.observe(el.value);
+  initImgs();
+})
 
-          if (i === totalImgs - 1) ratioSumMax = 999;
-        }
-        // 每張圖片的左右 margin 為 8px
-        const unitWidth = (containerWidth - 8 * row.length) / ratioSum;
-        row.forEach(function (elem) {
-          elem.displayWidth = Math.floor(
-            (unitWidth * elem.width) / elem.height
-          );
-        });
-        newImgList = [...newImgList, ...row];
-      }
-      this.imgsClone = newImgList;
-    },
-    loadImgs() {
-      this.imgsClone.forEach(img => {
+onUnmounted(() => {
+  state.resizeObserver.unobserve(el.value);
+})
+
+watch(() => props.heightSetting, () => {
+  debouncedCalcImgSize()
+})
+
+watch(() => props.imgs, () => {
+  updateImgs()
+})
+
+async function initImgs() {
+  const imgsClone = props.imgs.map(img => ({
+    ...img,
+    loading: true,
+    id: uuidv4()
+  }));
+  await Promise.all(
+    imgsClone.map((img, index) => {
+      return new Promise(resolve => {
         const image = new Image();
         image.src = img.src;
-        const imageHandler = () => {
-          this.imgsClone = this.imgsClone.map(item => ({
-            ...item,
-            loading: item.id === img.id ? false : item.loading
-          }));
+        image.onload = () => {
+          (imgsClone[index].width = image.width),
+            (imgsClone[index].height = image.height),
+            resolve();
         };
-        image.onload = imageHandler;
-        image.onerror = imageHandler;
       });
-    },
-    async initImgs() {
-      const imgsClone = this.imgs.map(img => ({
-        ...img,
-        loading: true,
-        id: uuidv4()
-      }));
-      await Promise.all(
-        imgsClone.map((img, index) => {
-          return new Promise(resolve => {
-            const image = new Image();
-            image.src = img.src;
-            image.onload = () => {
-              (imgsClone[index].width = image.width),
-                (imgsClone[index].height = image.height),
-                resolve();
-            };
-          });
-        })
-      );
-      this.imgsClone = imgsClone;
-      this.loadImgs();
-      this.debouncedCalcImgSize();
-    },
-    updateImgs() {
-      this.imgsClone = this.imgs.map(img => {
-        const existingImg = this.imgsClone.find(item => item.id === img.id);
-        return existingImg ? { ...existingImg } : { ...img, loading: true };
-      });
-      this.loadImgs();
-      this.debouncedCalcImgSize();
+    })
+  );
+  state.imgsClone = imgsClone;
+  loadImgs();
+  debouncedCalcImgSize();
+}
+
+function getValueWithoutUnit(val) {
+  return +val.replace("px", "");
+}
+
+function getImgStyles(id) {
+  const img = state.imgsClone.find(img => img.id === id);
+  return `width: ${img.displayWidth ? `${img.displayWidth}px` : ""};`;
+}
+
+function debouncedCalcImgSize() {
+  if (state.timeout) {
+    clearTimeout(state.timeout);
+    state.timeout = null;
+  } 
+  state.timeout = setTimeout(() => {
+      calcImgSize();
+    }, 300);
+}
+
+function calcImgSize() {
+  const containerEl = props.containerElement;
+  const { paddingLeft, paddingRight, borderWidth } =
+    window.getComputedStyle(containerEl);
+  const containerWidth =
+    containerEl.clientWidth -
+    getValueWithoutUnit(paddingLeft) -
+    getValueWithoutUnit(paddingRight) -
+    getValueWithoutUnit(borderWidth) * 2;
+  if (!containerWidth) return;
+  
+  const totalImgs = state.imgsClone.length;
+  let ratioSumMax = containerWidth / props.heightSetting;
+  let ratioSum,
+    ratio,
+    row,
+    i = 0;
+  let newImgList = [];
+
+  for (i; i < totalImgs; ) {
+    // console.log("out");
+    ratioSum = 0;
+    row = new Array();
+
+    while (i < totalImgs && ratioSum < ratioSumMax) {
+      // console.log("in");
+      const photo = { ...state.imgsClone[i] };
+      const { width, height } = photo;
+      ratio = width / height;
+      photo.isFirst = ratioSum === 0;
+      ratioSum += ratio;
+
+      row.push(photo);
+      i++;
+
+      if (i === totalImgs - 1) ratioSumMax = 999;
     }
+    // 每張圖片的左右 margin 為 8px
+    const unitWidth = (containerWidth - 8 * row.length) / ratioSum;
+    row.forEach(function (elem) {
+      elem.displayWidth = Math.floor(
+        (unitWidth * elem.width) / elem.height
+      );
+    });
+    newImgList = [...newImgList, ...row];
   }
-};
+  state.imgsClone = newImgList;
+}
+
+function loadImgs() {
+  state.imgsClone.forEach(img => {
+    const image = new Image();
+    image.src = img.src;
+    const imageHandler = () => {
+      state.imgsClone = state.imgsClone.map(item => ({
+        ...item,
+        loading: item.id === img.id ? false : item.loading
+      }));
+    };
+    image.onload = imageHandler;
+    image.onerror = imageHandler;
+  });
+}
+
+function updateImgs() {
+  state.imgsClone = props.imgs.map(img => {
+    const existingImg = state.imgsClone.find(item => item.id === img.id);
+    return existingImg ? { ...existingImg } : { ...img, loading: true };
+  });
+  loadImgs();
+  debouncedCalcImgSize();
+}
 </script>
 <style lang="scss" scoped>
 .gallery {
