@@ -49,7 +49,8 @@ const messages = {
         detail:
           "- Collaborated with backend developers and project managers\n- Skills & Technology used: HTML, CSS, JavaScript, Vue, Bootstrap, SPA"
       }
-    }
+    },
+    contact: "Contact Me"
   },
   zhTW: {
     linkToPage: "前往頁面",
@@ -99,7 +100,8 @@ const messages = {
         detail:
           "- 與後端工程師以及產品經理協作專案\n- 使用技術：HTML, CSS, JavaScript, Vue, Bootstrap, SPA"
       }
-    }
+    },
+    contact: "聯絡方式"
   }
 };
 

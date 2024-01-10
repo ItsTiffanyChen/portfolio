@@ -6,6 +6,7 @@ import { PARAMS_MAPPING } from "./i18n";
 import keys from "lodash/keys";
 import Gallery from "./components/Gallery.vue";
 import Lightbox from "./components/Lightbox.vue";
+import useTypewriter from "./components/typewriter.js";
 import galleryList from "./galleryList.js";
 
 const router = useRouter();
@@ -21,9 +22,12 @@ const lightbox = reactive({
   url: ""
 });
 
+const { textHTML, typewriter } = useTypewriter(["Hi!", "I'm Tiffany Chen", "A Front-End Developer", "Based in Taiwan"])
+
 onMounted(async () => {
   await router.isReady();
   validateLang(route.params.lang);
+  typewriter()
 });
 
 watch(() => route.params.lang, validateLang);
@@ -66,6 +70,7 @@ function isMobileImg(img) {
       >
     </div>
     <div class="app__main m-auto">
+      <div class="app__main__intro p-2" v-html="textHTML.html"></div>
       <div ref="galleryContainerRef" class="main__portfolio">
         <Gallery
           :imgs="imgs"
@@ -73,6 +78,23 @@ function isMobileImg(img) {
           :height-setting="1200"
           @onImgClick="openLightbox"
         />
+      </div>
+      <div class="app__main__contact position-absolute text-center p-2">
+          <div class="app__main__contact__title mb-2">
+          {{ t("contact") }}
+          </div>
+          <div class="app__main__contact__item">
+            <a href="https://github.com/ItsTiffanyChen" target="_blank">Github</a>
+          </div>
+          <div class="app__main__contact__item">
+            <a href="https://www.linkedin.com/in/hsin-i-tiffany-chen-015392194/" target="_blank">LinkedIn</a>
+          </div>
+          <div class="app__main__contact__item">
+            <a href="tel:0912529286" target="_blank">0912529286</a>
+          </div>
+          <div class="app__main__contact__item">
+            <a href="mailto:hc3099@tc.columbia.edu" target="_blank">hc3099@tc.columbia.edu</a>
+          </div>
       </div>
     </div>
     <Lightbox :show="lightbox.show" @on-close="lightbox.show = false">
@@ -119,23 +141,29 @@ body {
 }
 </style>
 <style scoped lang="scss">
+@mixin custom-link {
+  color: #a1d8ed;
+  transition: color 0.15s linear;
+  text-decoration: none;
+
+  &:hover {
+    color: #86b7c9;
+  }
+
+  &--active,
+  &--active:hover {
+    color: #5f828e;
+  }
+}
+
 .app {
   min-height: 100vh;
   min-width: 360px;
+  font-family: monospace;
+  padding-bottom: 132px;
 
   &__lang {
-    color: #a1d8ed;
-    transition: color 0.15s linear;
-    text-decoration: none;
-
-    &:hover {
-      color: #86b7c9;
-    }
-
-    &--active,
-    &--active:hover {
-      color: #5f828e;
-    }
+    @include custom-link;
   }
 
   &__main {
@@ -152,6 +180,47 @@ body {
 
     @media screen and (min-width: 1300px) {
       padding: 80px;
+    }
+
+    &__intro {
+      letter-spacing: 2px;
+      font-size: 18px;
+      line-height: 1.5;
+      height: 124px;
+      margin-bottom: 20px;
+
+      @media screen and (min-width: 960px) {
+        height: 160px;
+        font-size: 24px;
+        margin-bottom: 40px;
+      }
+
+      :deep(.caret) {
+        margin-left: 2px;
+        font-weight: bold;
+        color: orange;
+        animation: blink-caret .5s step-end infinite;
+      }
+    }
+
+    &__contact {
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background-color: #232530;
+
+      &__title {
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      &__item {
+        font-size: 14px;
+
+        a {
+          @include custom-link;
+        }
+      }
     }
   }
 
@@ -206,5 +275,10 @@ body {
       }
     }
   }
+}
+
+@keyframes blink-caret {
+  from, to { color: transparent }
+  50% { color: orange }
 }
 </style>
