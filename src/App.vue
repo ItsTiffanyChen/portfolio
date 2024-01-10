@@ -1,6 +1,6 @@
 <script setup>
 import { useRouter, useRoute } from "vue-router";
-import { onMounted, watch, reactive, computed } from "vue";
+import { onMounted, watch, reactive, computed, inject } from "vue";
 import { useI18n } from "vue-i18n";
 import { PARAMS_MAPPING } from "./i18n";
 import Lightbox from "./components/Lightbox.vue";
@@ -49,7 +49,21 @@ const { textHTML, typewriter } = useTypewriter([
   "Based in Taiwan"
 ]);
 
+const rollbar = inject("rollbar");
+
 onMounted(async () => {
+  if (import.meta.env.VITE_ENV !== "dev") {
+    rollbar.configure({
+      logLevel: "info",
+      payload: { environment: import.meta.env.VITE_ENV }
+    });
+    rollbar.log(
+      `visit from "${
+        document.referrer || "unknown"
+      }" at "${new Date().toTimeString()}"`
+    );
+  }
+
   await router.isReady();
   validateLang(route.params.lang);
   typewriter();
