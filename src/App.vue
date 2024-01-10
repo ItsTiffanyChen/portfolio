@@ -181,7 +181,7 @@ function isMobileImg(img) {
             <div
               v-for="(skill, index) in lightbox.skills"
               :key="index"
-              class="app__main__lightbox__tag mr-1 p-1"
+              class="app__main__lightbox__tag mr-1 p-1 mb-1"
             >
               {{ skill }}
             </div>
