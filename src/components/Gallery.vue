@@ -1,74 +1,57 @@
-<template>
-  <div ref="el">
-    <div class="gallery d-flex flex-wrap">
-      <div
-        v-for="(img, index) in state.imgsClone"
-        :key="img.id"
-        class="gallery__img mb-2 position-relative mx-1"
-        :style="getImgStyles(img.id)"
-      >
-        <img :src="img.src" loading="lazy" />
-        <div
-          class="gallery__img__mask position-absolute d-flex align-items-center justify-content-center"
-          @click="$emit('onImgClick', img)"
-        >
-          <div class="gallery__img__mask__text text-white p-2">
-            {{ t(img.title) }}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</template>
 <script setup>
 import { useI18n } from "vue-i18n";
 import VueTypes from "vue-types";
 import ResizeObserver from "resize-observer-polyfill";
 import { v4 as uuidv4 } from "uuid";
-import { reactive, watch, onMounted, onUnmounted, ref, nextTick } from "vue"
+import { reactive, watch, onMounted, onUnmounted, ref, nextTick } from "vue";
 
 const props = defineProps({
   imgs: VueTypes.arrayOf(
-      VueTypes.shape({
-        src: VueTypes.string.def("")
-      }).def({ src: "" })
-    ).def([]).loose,
-    heightSetting: VueTypes.number.def(0),
-    containerElement: VueTypes.instanceOf(HTMLDivElement)
-})
-const emit = defineEmits(["onImgClick"])
+    VueTypes.shape({
+      src: VueTypes.string.def("")
+    }).def({ src: "" })
+  ).def([]).loose,
+  heightSetting: VueTypes.number.def(0),
+  containerElement: VueTypes.instanceOf(HTMLDivElement)
+});
+const emit = defineEmits(["onImgClick"]);
 const { t } = useI18n();
 
 const state = reactive({
   imgsClone: [],
   resizeObserver: null,
   timeout: null
-})
+});
 
-const el = ref(null)
+const el = ref(null);
 
-onMounted(async() => {
-  await nextTick()
+onMounted(async () => {
+  await nextTick();
   state.resizeObserver = new ResizeObserver(entries => {
     // console.log("resized");
     debouncedCalcImgSize();
   });
-  console.log(el.value);
   state.resizeObserver.observe(el.value);
   initImgs();
-})
+});
 
 onUnmounted(() => {
   state.resizeObserver.unobserve(el.value);
-})
+});
 
-watch(() => props.heightSetting, () => {
-  debouncedCalcImgSize()
-})
+watch(
+  () => props.heightSetting,
+  () => {
+    debouncedCalcImgSize();
+  }
+);
 
-watch(() => props.imgs, () => {
-  updateImgs()
-})
+watch(
+  () => props.imgs,
+  () => {
+    updateImgs();
+  }
+);
 
 async function initImgs() {
   const imgsClone = props.imgs.map(img => ({
@@ -107,10 +90,10 @@ function debouncedCalcImgSize() {
   if (state.timeout) {
     clearTimeout(state.timeout);
     state.timeout = null;
-  } 
+  }
   state.timeout = setTimeout(() => {
-      calcImgSize();
-    }, 300);
+    calcImgSize();
+  }, 300);
 }
 
 function calcImgSize() {
@@ -123,7 +106,7 @@ function calcImgSize() {
     getValueWithoutUnit(paddingRight) -
     getValueWithoutUnit(borderWidth) * 2;
   if (!containerWidth) return;
-  
+
   const totalImgs = state.imgsClone.length;
   let ratioSumMax = containerWidth / props.heightSetting;
   let ratioSum,
@@ -153,9 +136,7 @@ function calcImgSize() {
     // 每張圖片的左右 margin 為 8px
     const unitWidth = (containerWidth - 8 * row.length) / ratioSum;
     row.forEach(function (elem) {
-      elem.displayWidth = Math.floor(
-        (unitWidth * elem.width) / elem.height
-      );
+      elem.displayWidth = Math.floor((unitWidth * elem.width) / elem.height);
     });
     newImgList = [...newImgList, ...row];
   }
@@ -186,6 +167,28 @@ function updateImgs() {
   debouncedCalcImgSize();
 }
 </script>
+<template>
+  <div ref="el">
+    <div class="gallery d-flex flex-wrap">
+      <div
+        v-for="(img, index) in state.imgsClone"
+        :key="img.id"
+        class="gallery__img mb-2 position-relative mx-1"
+        :style="getImgStyles(img.id)"
+      >
+        <img :src="img.src" loading="lazy" />
+        <div
+          class="gallery__img__mask position-absolute d-flex align-items-center justify-content-center"
+          @click="$emit('onImgClick', img)"
+        >
+          <div class="gallery__img__mask__text text-white p-2">
+            {{ t(img.title) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
 <style lang="scss" scoped>
 .gallery {
   &__img {
